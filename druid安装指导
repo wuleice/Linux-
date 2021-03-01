@@ -16,3 +16,15 @@ export PATH=${JAVA_HOME}/bin:$PATH
 12，查看druid表相关数据：
 SELECT TABLE_CATALOG, TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, ORDINAL_POSITION, COLUMN_DEFAULT, IS_NULLABLE, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, CHARACTER_OCTET_LENGTH, NUMERIC_PRECISION, NUMERIC_PRECISION_RADIX, NUMERIC_SCALE, DATETIME_PRECISION, CHARACTER_SET_NAME, COLLATION_NAME, JDBC_TYPE
 FROM INFORMATION_SCHEMA.COLUMNS
+
+
+删除数据指导：
+1，首先将需要删除的数据标记为unused，此处按照时间范围进行标记：curl -X 'POST' -H 'Content-Type:application/json' -d '{ "interval" : "2019-09-01T18:00:00.000Z/2021-03-01T20:00:00.000Z" }' http://127.0.0.1:8081/druid/coordinator/v1/datasources/iems_inverter_string_test/markUnused
+2，创建删除任务（需要自己编辑deletion-kill.json）：curl -X 'POST' -H 'Content-Type:application/json' -d @deletion-kill.json http://127.0.0.1:8081/druid/indexer/v1/task
+deletion-kill.json的内容如下：
+{
+  "type": "kill",
+  "dataSource": "iems_inverter_string_test",
+  "interval" : "2019-09-01/2021-03-01"
+}
+3，查看是否删除完成：ls -l1 var/druid/segments/iems_inverter_string_test
