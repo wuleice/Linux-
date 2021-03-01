@@ -19,6 +19,7 @@ FROM INFORMATION_SCHEMA.COLUMNS
 
 插入数据：
 ./bin/post-index-task --file index_parallel_performance.json --url http://127.0.0.1:8081
+time ./bin/post-index-task --file index_parallel_performance.json --url http://127.0.0.1:8081 --complete-timeout 36000 --load-timeout 36000 --quiet
 
 删除数据指导：
 1，首先将需要删除的数据标记为unused，此处按照时间范围进行标记：curl -X 'POST' -H 'Content-Type:application/json' -d '{ "interval" : "2019-09-01T18:00:00.000Z/2021-03-01T20:00:00.000Z" }' http://127.0.0.1:8081/druid/coordinator/v1/datasources/iems_inverter_string_test/markUnused
