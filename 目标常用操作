@@ -1,0 +1,21 @@
+1，将某个目录下的文件平均分配到多个目录下，采用脚本执行，执行方式及脚本如下：
+sh ./splitDirToN.sh 带拆分目录 拆分数量
+脚本如下：
+#!/bin/bash
+
+cd $1
+all_files=$(ls)
+
+splitNum=$2
+echo "将目录$1下的文件拆分成$2个目录"
+for ((i=0; i<splitNum; i++))
+do
+	mkdir dir$i
+done
+count=0
+for file in $all_files
+do
+	targetNum=`expr $count % $splitNum`
+	mv $file dir$targetNum
+	((count++))
+done
